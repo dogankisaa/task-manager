@@ -11,12 +11,12 @@ class UserService {
         .set({"name": name, "email": email, "type": type});
   }
 
-  getUserName() async {
+  getUserData(parameter) async {
     var data = await FirebaseFirestore.instance
         .collection("users")
         .doc(auth.currentUser!.email)
         .get();
 
-    return data.data()?["name"];
+    return data.data()?[parameter];
   }
 }

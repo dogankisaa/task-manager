@@ -38,13 +38,13 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: LoginView());
+        home: userCheck());
   }
 }
 
 userCheck() {
   FirebaseAuth auth = FirebaseAuth.instance;
-  if (auth.currentUser != null) {
+  if (auth.currentUser == null) {
     return LoginView();
   } else {
     return HomeView();
