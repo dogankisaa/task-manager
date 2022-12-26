@@ -1,14 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:taskapp/core/helper/bottomSheet.dart';
+import 'package:taskapp/core/helper/bottom_sheet.dart';
 import 'package:taskapp/service/auth.dart';
 import 'package:taskapp/service/task_service.dart';
 import 'package:taskapp/service/user_service.dart';
 import 'package:taskapp/viewModel/base_view_model.dart';
+import 'package:intl/intl.dart';
 
 class HomeViewModel extends BaseViewModel {
-  CollectionReference taskRef = FirebaseFirestore.instance.collection("tasks");
+  DateTime startTime = DateTime.now();
+  DateTime dueTime = DateTime.now();
+  bool isTimeValid = false;
   Stream<DocumentSnapshot>? taskSnapshot;
   String? userName, userType;
   bool isManager = false;
@@ -45,12 +48,27 @@ class HomeViewModel extends BaseViewModel {
   }
 
   addNewTask() {
-    TaskService()
-        .addNewTask(taskTitleController.text, "start", "due", asignedUsers);
+    print("date");
+    print({startTime.month + startTime.day + startTime.hour});
+    TaskService().addNewTask(
+        taskTitleController.text,
+        DateFormat.MMMMEEEEd().format(startTime),
+        DateFormat.MMMMEEEEd().format(dueTime),
+        asignedUsers);
   }
 
-  getTaskList() async {
-    taskSnapshot = await TaskService().getAllTasks();
-    return taskSnapshot;
+  setStartTime(time) {
+    print(startTime);
+    return startTime = time;
+  }
+
+  setDueTime(time) {
+    dueTime = time;
+  }
+
+  timeCompore() {
+    print(startTime);
+    print(dueTime);
+    dueTime.isBefore(startTime) ? isTimeValid = true : isTimeValid = false;
   }
 }
