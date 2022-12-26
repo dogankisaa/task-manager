@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:taskapp/viewModel/home_view_model.dart';
+
+import '../service/task_service.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -26,11 +29,18 @@ class HomeView extends StatelessWidget {
               )
             : null,
         body: Center(
-            child: FutureBuilder(
-                future: vm.getName(),
-                builder: (context, snapshot) {
+            child: StreamBuilder<QuerySnapshot>(
+                stream: vm.taskRef.snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasData) {
-                    return Text("Welcome ${vm.userName}");
+                    return ListView(
+                        children: snapshot.requireData.docs
+                            .map((DocumentSnapshot document) {
+                      return Text(document.data().toString().contains("title")
+                          ? document.get("title")
+                          : "");
+                    }).toList());
                   } else {
                     return Center(
                       child: CircularProgressIndicator(),

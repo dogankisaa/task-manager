@@ -8,6 +8,8 @@ import 'package:taskapp/service/user_service.dart';
 import 'package:taskapp/viewModel/base_view_model.dart';
 
 class HomeViewModel extends BaseViewModel {
+  CollectionReference taskRef = FirebaseFirestore.instance.collection("tasks");
+  Stream<DocumentSnapshot>? taskSnapshot;
   String? userName, userType;
   bool isManager = false;
   List asignedUsers = [];
@@ -45,5 +47,10 @@ class HomeViewModel extends BaseViewModel {
   addNewTask() {
     TaskService()
         .addNewTask(taskTitleController.text, "start", "due", asignedUsers);
+  }
+
+  getTaskList() async {
+    taskSnapshot = await TaskService().getAllTasks();
+    return taskSnapshot;
   }
 }
