@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:taskapp/core/helper/bottom_sheet.dart';
 import 'package:taskapp/service/auth.dart';
@@ -8,10 +9,13 @@ import 'package:taskapp/service/user_service.dart';
 import 'package:taskapp/viewModel/base_view_model.dart';
 import 'package:intl/intl.dart';
 
+import '../service/notification_service.dart';
+
 class HomeViewModel extends BaseViewModel {
   DateTime startTime = DateTime.now();
   DateTime dueTime = DateTime.now();
   bool isTimeValid = false;
+  String fcm = "";
   Stream<DocumentSnapshot>? taskSnapshot;
   String? userName, userType;
   bool isManager = false;
@@ -24,6 +28,8 @@ class HomeViewModel extends BaseViewModel {
   Future<void> init() async {
     getName();
     getType();
+
+    NotificationService().connetctNotification();
   }
 
   getName() async {
@@ -47,10 +53,12 @@ class HomeViewModel extends BaseViewModel {
     asignedUsers.add(assignedUsersController.text);
   }
 
-  addNewTask() {
+  addNewTask() async {
+    String? token = await FirebaseMessaging.instance.getToken();
     print("date");
     print({startTime.month + startTime.day + startTime.hour});
     TaskService().addNewTask(
+        token,
         taskTitleController.text,
         DateFormat.MMMMEEEEd().format(startTime),
         DateFormat.MMMMEEEEd().format(dueTime),
