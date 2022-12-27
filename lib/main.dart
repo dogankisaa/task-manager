@@ -54,6 +54,7 @@ class MyApp extends StatelessWidget {
 }
 
 userCheck() {
+  print("object");
   FirebaseAuth auth = FirebaseAuth.instance;
   if (auth.currentUser == null) {
     return LoginView();

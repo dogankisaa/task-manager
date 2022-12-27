@@ -54,15 +54,23 @@ class HomeViewModel extends BaseViewModel {
   }
 
   addNewTask() async {
+    print(
+      DateFormat.jm().format(startTime),
+    );
     String? token = await FirebaseMessaging.instance.getToken();
     print("date");
     print({startTime.month + startTime.day + startTime.hour});
     TaskService().addNewTask(
-        token,
-        taskTitleController.text,
-        DateFormat.MMMMEEEEd().format(startTime),
-        DateFormat.MMMMEEEEd().format(dueTime),
-        asignedUsers);
+      taskTitleController.text,
+      DateFormat.MMMMEEEEd().format(startTime) +
+          " " +
+          DateFormat.jm().format(startTime),
+      DateFormat.MMMMEEEEd().format(dueTime) +
+          " " +
+          DateFormat.jm().format(dueTime),
+      asignedUsers,
+      token,
+    );
   }
 
   setStartTime(time) {
